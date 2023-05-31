@@ -1,0 +1,34 @@
+#Package PreReqs
+import os
+import platform
+import requests
+import socket
+
+#Layout custom functions
+
+def check_internet_connection():
+    request = requests.get('https://www.google.com')
+    response = request.status_code
+    if response == 200:
+        print ('Network Connection Pass')
+    else:
+        print ('Network Failure')
+
+def write_report():
+    with open('w+') as f:
+        for 
+
+
+
+
+
+
+
+OS_INFO = platform.uname()
+print (OS_INFO)
+check_internet_connection()
+
+
+
+
+
