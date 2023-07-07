@@ -14,13 +14,17 @@ from modules.Ubuntu_Pwr_State import Power_State_Testing
 
 #MAIN:
 #Imports
-import platform
-import subprocess
-import os
-import psutil
-import subprocess
-import requests
-import keyboard
+
+try:
+        import platform
+        import subprocess
+        import os
+        import psutil
+        import subprocess
+        import requests
+        import keyboard
+except ImportError:
+        pass
 
 
 #From_Imports
@@ -78,12 +82,17 @@ def OS_Info():
                 log_message(os)
                 log_message(kernel)
                 log_message(version+'\n')
-                return 'OpenSUSE'
+                return 'OpenSUSE Leap'
         elif OS_INFO[0] == 'Red Hat':
                 log_message(os)
                 log_message(kernel)
                 log_message(version+'\n')
-                return 'Red Hat'
+                return 'Red Hat Enterprise Linux'
+        elif OS_INFO[0] == 'CentOS':
+                log_message(os)
+                log_message(kernel)
+                log_message(version+'\n')
+                return 'CentOS'
 
 #PIP_INSTALLS
 def Pip_Installs():
@@ -91,33 +100,33 @@ def Pip_Installs():
         PIP_Header = "\t\t\t PIP Package Information\n"
         log_message(PIP_Header)
 
-        #Run func to install Pip packs automatically
+        #Define the required Packages
         Pip_packs = ['keyboard', 'psutil']
-        print ('[+] Installation of Prerequisite Pip Packages is starting.')
-        log_pip = '[+] Installation of Prerequisite Pip Packages is starting.'
-        log_message(log_pip)
-        x=0
-        while x < len(Pip_packs):
+
+        #Check and Install Packages
+        print('[+] Checking & Installation of Prerequisite Pip Packages is starting.')
+        log_message('[+] Checking & Installation of Prerequisite Pip Packages is starting.')
+        for package in Pip_packs:
                 try:
-                        print ('Installation of:', Pip_packs[x])
-                        pack_being_installed = 'Installation of: ' + str(Pip_packs[x])
-                        log_message(pack_being_installed)
-                        subprocess.run(['pip','install', Pip_packs[x]])
-        #Need to investigate why failed installs still report success
+                        #Run PIP CMD show to check if a package is already installed
+                        result=subprocess.run(['pip', 'show', package], capture_output=True, text=True)
 
-                        print('Success')
-                        install_success = 'Success.'
-                        log_message(install_success+'\n')
+                        if result.returncode == 0:
+                                #Package is already Installed
+                                print(f'Package {package} is already installed. Skipping Installation')
+                                log_message(f'Package {package} is already installed. Skipping Installation')
+                        else:
+                                #package is not installed
+                                print(f'Installing Package: {package}')
+                                log_message(f'Installing Package: {package}')
+                                subprocess.run(['pip', 'install', package])
+                                print(f'Successfully installed Package: {package}')
+                                log_message(f'Successfully installed Package: {package}')
 
-        #If OS Error print FAILURE and indicate which package was unsuccessful
-                except os.error():
-                        print('Package: ', Pip_packs[x], 'failed to install.')
-                        fail_install = 'Package: ' + str(Pip_packs[x]) + ' failed to install.'
-                        log_message(fail_install+'\n')
-                        x+=1
-                x+=1
-                if x > len(Pip_packs):
-                        break
+                except subprocess.CalledProcessError as e:
+                        #Error occurred during Pip show command OR installation
+                        print(f'Failed to check or install package: {package}. Error: {e}')
+                        log_message(f'Failed to check or install package: {package}. Error: {e}')
         
 #CPU_INFO
 #Get CPU Info (Linux Only Var)
@@ -188,18 +197,7 @@ def Memory_Info():
 
 #PACKAGE_INSTALLATION
 #Build Out for installation of Ubuntu Packages - SKIP for Windows [Potentially build tool to detect OS later]
-def Package_Installation():
-
-    def check():
-        OS_INFO = platform.uname()
-        if (OS_INFO[0]) != 'Windows':
-            return False
-
-    
-    if check() == True:
-        log_message('OS is Windows...Skipping Ubuntu Packages.')
-    
-    elif check() == False:
+def Ubuntu_Package_Installation():
         Packages = ['qtcreator','ethtool', 'ipmitool', 'qtbase5-dev', 'qt5-qmake', 'cmake', 'python3-pip', 'snapd', 'mesa-libGLU-devel.x86_64']
         print ('[+] Installation of Ubuntu packages is starting')
         x=0
@@ -216,7 +214,78 @@ def Package_Installation():
                 x+=1
                 if x > len(Packages):
                         break
+
+def RHEL_Package_Installation():
+        Packages = ['qtcreator','ethtool', 'ipmitool', 'qtbase5-dev', 'qt5-qmake', 'cmake', 'python3-pip', 'snapd', 'mesa-libGLU-devel.x86_64']
+        print ('[+] Installation of Ubuntu packages is starting')
+        x=0
+        while x < len(Packages):
+                print ('Installation of:', Packages[x])
+                try:
+                        subprocess.run(['sudo', 'yum','install','-y', Packages[x]])
+                        print('Success')
+                except FileNotFoundError:
+                        pass
+                if os.error():
+                        print('Package: ', Packages[x], 'failed to install.')
+                        x+=1
+                x+=1
+                if x > len(Packages):
+                        break
+
+def CentOS_Package_Installation():
+        Packages = ['qtcreator','ethtool', 'ipmitool', 'qtbase5-dev', 'qt5-qmake', 'cmake', 'python3-pip', 'snapd', 'mesa-libGLU-devel.x86_64']
+        print ('[+] Installation of Ubuntu packages is starting')
+        x=0
+        while x < len(Packages):
+                print ('Installation of:', Packages[x])
+                try:
+                        subprocess.run(['sudo', 'yum','install','-y', Packages[x]])
+                        print('Success')
+                except FileNotFoundError:
+                        pass
+                if os.error():
+                        print('Package: ', Packages[x], 'failed to install.')
+                        x+=1
+                x+=1
+                if x > len(Packages):
+                        break
+
+def OpenSUSE_Package_Installation():
+        Packages = ['qtcreator','ethtool', 'ipmitool', 'qtbase5-dev', 'qt5-qmake', 'cmake', 'python3-pip', 'snapd', 'mesa-libGLU-devel.x86_64']
+        print ('[+] Installation of Ubuntu packages is starting')
+        x=0
+        while x < len(Packages):
+                print ('Installation of:', Packages[x])
+                try:
+                        subprocess.run(['sudo', 'zypper','install','-y', Packages[x]])
+                        print('Success')
+                except FileNotFoundError:
+                        pass
+                if os.error():
+                        print('Package: ', Packages[x], 'failed to install.')
+                        x+=1
+                x+=1
+                if x > len(Packages):
+                        break
+
+
+#BURN INSTALLATION
+#def Windows_Burn_Installation():
+        #software_path =
+        #subprocess.run([software_path])
+        #result = subprocess.run([software_path], capture_output=True)
+        #if result.returncode == 0:
+        #        pass
+        #else:
+        #        log_message('PassMark Failed to Install - Please Install Manually.', result.returncode)
                 
+
+
+
+
+
+
 #Network Testing
 def Network_Chk():
         #Create Network Header
@@ -232,14 +301,15 @@ def Network_Chk():
                         print(f"Interface :", interface_name)
                         interface=f"Interface :"+ str(interface_name)
                         log_message(interface)
-                if str(address.family) == 'AddressFamily.AF_INET':
-                        print(f"[+] IP Address: ", address.address)
-                        ip="[+] IP Address: " + address.address
-                        log_message(ip)
-                elif str(address.family) == 'AddressFamily.AF_PACKET':
-                        print(f"[+] MAC Address: ", address.address)
-                        mac="[+] MAC Address: " + address.address
-                        log_message(mac+'\n')
+
+                        if str(address.family) == 'AddressFamily.AF_INET':
+                                print(f"[+] IP Address: ", address.address)
+                                ip="[+] IP Address: " + address.address
+                                log_message(ip)
+                        elif str(address.family) == 'AddressFamily.AF_PACKET':
+                                print(f"[+] MAC Address: ", address.address)
+                                mac="[+] MAC Address: " + address.address
+                                log_message(mac+'\n')
                 line_break()
 
         #if error
@@ -255,9 +325,9 @@ def Network_Chk():
                         print ('Network Connection Pass')
                         print ('Successful ping to: Google.com')
                         log_message('NETWORK PASSED\n')
-                elif response!= 200:
+                else:
                         print ('Network Failure')
-                        log_message(response)
+                        log_message(str(response))
                         log_message('NETWORK FAILED\n')
                 line_break()
 
@@ -270,7 +340,7 @@ def Setup_Snapd():
         if os.error:
                 print('Error occurred.')
         else:
-                keyboard.press_and_release('enter')
+                keyboard.press('enter')
                 print('Snapd service started.')
         try:
                 subprocess.run(['sudo','ln','-s', '/var/lib/snapd/snap', '/snap'])
@@ -282,21 +352,93 @@ def Setup_Snapd():
                 keyboard.press_and_release('enter')
                 print('Snapd service started')
 
+
+#Define functions PER OS:
+Operating_System = OS_Info()
+
+
+#Ubuntu:
+def OS_CHOOSER(Operating_System):
+        def Ubuntu_Test():
+                CPU_Info()
+                Memory_Info()
+                Network_Chk()
+                Ubuntu_Package_Installation()
+                Setup_Snapd()
+                Reminders()
+                #Sys_Update()
+                #Package_Cleanup()
+                #Burn_Linux()
+                Power_State_Testing()
+                Date_Time_End()
+
+        def Windows_Test():
+                CPU_Info()
+                Memory_Info()
+                Network_Chk()
+                #Package_Installation()
+                Reminders()
+                Date_Time_End()
+       
+        def RHEL_Test():
+                CPU_Info()
+                Memory_Info()
+                Network_Chk()
+                RHEL_Package_Installation()
+                Setup_Snapd()
+                Reminders()
+                #Sys_Update()
+                #Package_Cleanup()
+                #Burn_Linux()
+                Power_State_Testing()
+                Date_Time_End()
+
+        def Open_SUSE_Test():
+                CPU_Info()
+                Memory_Info()
+                Network_Chk()
+                OpenSUSE_Package_Installation()
+                Setup_Snapd()
+                Reminders()
+                #Sys_Update()
+                #Package_Cleanup()
+                #Burn_Linux()
+                Power_State_Testing()
+                Date_Time_End()
+
+        def CentOS_Test():
+                CPU_Info()
+                Memory_Info()
+                Network_Chk()
+                CentOS_Package_Installation()
+                Setup_Snapd()
+                Reminders()
+                #Sys_Update()
+                #Package_Cleanup()
+                #Burn_Linux()
+                Power_State_Testing()
+                Date_Time_End()
+
+        if Operating_System == 'Ubuntu':
+               Ubuntu_Test()
+
+        elif Operating_System == 'Windows':
+               Windows_Test()
+
+        elif Operating_System == 'CentOS':
+               CentOS_Test()
+
+        elif Operating_System == 'Red Hat Enterprise Linux':
+               RHEL_Test()
+
+        elif Operating_System == 'OpenSUSE Leap':
+               Open_SUSE_Test()
+
 def main():
         Date_Time_Start()
         Pip_Installs()
         OS_Info()
-        CPU_Info()
-        Memory_Info()
-        Network_Chk()
-        Package_Installation()
-        Setup_Snapd()
-        Reminders()
-        #Sys_Update()
-        #Package_Cleanup()
-        #Burn_Linux()
-        Power_State_Testing()
-        Date_Time_End()
+        OS_CHOOSER(Operating_System)
 
 #MAIN
 if __name__ == '__main__':
