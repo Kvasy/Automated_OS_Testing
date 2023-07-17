@@ -4,7 +4,8 @@ try:
     import os
     import psutil
     import keyboard
-    import ping3
+    import shutil
+
     #From_Imports
     from datetime import datetime
 
@@ -120,7 +121,7 @@ def pip_installs():
     log_message(pip_header)
 
     #Define the required Packages
-    pip_packs = ['keyboard', 'psutil', 'ping3']
+    pip_packs = ['keyboard', 'psutil', 'ping3', 'shutil', 'platform', 'subprocess', 'os']
 
     #Check and Install Packages
     log_message('[+] Checking & Installation of Prerequisite Pip Packages is starting.')
@@ -233,16 +234,20 @@ def opensuse_package_installation():
             log_message(f'An error occurred while installing {package}: {str(e)}')
     log_message('Packages installed.\n')
 
+'''
+
 #BURN INSTALLATION
-#def Windows_Burn_Installation():
-    #software_path =
-    #subprocess.run([software_path])
-    #result = subprocess.run([software_path], capture_output=True)
-    #if result.returncode == 0:
-    #        pass
-    #else:
-    #        log_message('PassMark Failed to Install - Please Install Manually.', result.returncode)
-           
+def Windows_Burn_Installation():
+    software_path =
+    subprocess.run([software_path])
+    result = subprocess.run([software_path], capture_output=True)
+    if result.returncode == 0:
+            pass
+    else:
+            log_message('PassMark Failed to Install - Please Install Manually.', result.returncode)
+
+'''
+
 #Network Testing
 def network_chk():
     #Setup Sub-Functions
@@ -276,6 +281,55 @@ def network_chk():
     #Run Ping Command
     ping_google()
 
+'''
+#CopyxTest
+def copy_x_test():
+    def file_gen(file_path, size_in_bytes):
+        chunk_size = 1024 * 1024 #1MB chunk size for efficient writing
+
+        with open(file_path, 'wb') as file:
+            bytes_written=0
+
+            while bytes_written < size_in_bytes:
+                chunk = b'\0' *min(chunk_size, size_in_bytes - bytes_written)
+                file.write(chunk)
+                bytes_written += len(chunk)
+
+        log_message(f'File Generated: {file_path}')
+
+    #Generates a 1GB file within the main directory of C:\  
+    file_gen('C:\\log_test.log', 1024 * 1024 * 1024)
+
+    #Calcs MD5_Hash
+    def calc_md5(file_path):
+        import hashlib
+        hash_md5 = hashlib.md5()
+        with open(file_path, 'rb') as file:
+            for chunk in iter(lambda: file.read(4096), b''):
+                hash_md5.update(chunk)
+        return hash_md5.hexdigest()
+    
+    og_hash = calc_md5('C:\\log_test.log')
+    source = 'C:\\log_test.log'
+    dest = ''
+    new_dest = 'C:\\copyxtest\\log_test.log'
+
+    def copy_source_to_ext(source, dest):
+        shutil.copy2(source, dest)
+
+    def copy_ext_to_source(dest, new_dest):
+        shutil.copy2(dest, new_dest)
+
+    old = calc_md5(source)
+    new = calc_md5(new_dest)
+
+    def compare_hash(old, new):
+        if old == new:
+            return log_message('Pass_1')
+        else:
+            print('TBD')
+'''
+            
 #Setup_SNAPD
 def setup_snapd():
     try:
