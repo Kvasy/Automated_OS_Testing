@@ -12,10 +12,16 @@ try:
 except ImportError:
     pass
 
-#First load all custom modules and functions:
-from modules.Custom_Modules.log import log_message
-from modules.Reminders import Reminders
-from modules.Ubuntu_Pwr_State import Power_State_Testing
+
+try:
+
+    #First load all custom modules and functions:
+    from modules.Custom_Modules.log import log_message
+    from modules.Reminders import Reminders
+    from modules.Ubuntu_Pwr_State import Power_State_Testing
+
+except ImportError:
+    pass
 
 #Function to format date and time strings
 def format_date_time(current_date_time):
@@ -89,14 +95,11 @@ def log_cpu_info():
     total_cores = "[+] Number of Total cores : " + str(psutil.cpu_count(logical=True))
     cpu_frequency = psutil.cpu_freq()
     cpu_max_freq = f"[+] Max Frequency : + {cpu_frequency.max:.2f}Mhz"
-    cpu_min_freq = f"[+] Min Frequency : {cpu_frequency.min:.2f}Mhz"
 
     #Log Results
-    
     log_message(phys_cores)
     log_message(total_cores)
-    log_message(cpu_max_freq)
-    log_message(cpu_min_freq+'\n')
+    log_message(cpu_max_freq + '\n')
 
 #log_memory_information
 def log_memory_info():
@@ -256,9 +259,9 @@ def network_chk():
         response_time = ping3.ping('google.com')
 
         if response_time is not None:
-            log_message('Ping Successful. Response time: ' + str(response_time) + '\n')
+            log_message('Ping Successful to Google.com. Response time: ' + str(response_time) + '\n')
         else:
-            log_message('Ping failed.\n')
+            log_message('Ping failed to Google.com.\n')
 
     #Create Network Header
     network_header = ("\t\t\t Network Information\n")
@@ -351,8 +354,6 @@ def setup_snapd():
         keyboard.press_and_release('enter')
         print('Snapd service started')
 
-#Define functions PER OS:
-operating_system = os_info()
 
 #Ubuntu:
 def os_chooser(operating_system):
@@ -414,7 +415,7 @@ def os_chooser(operating_system):
         Power_State_Testing()
         date_time_end()
 
-    if operating_system == 'Ubuntu':
+    if operating_system == 'Linux':
         ubuntu_test()
 
     elif operating_system== 'Windows':
@@ -432,7 +433,8 @@ def os_chooser(operating_system):
 def main():
     date_time_start()
     pip_installs()
-    os_info()
+    #Define functions PER OS:
+    operating_system = os_info()
     os_chooser(operating_system)
 
 #MAIN
