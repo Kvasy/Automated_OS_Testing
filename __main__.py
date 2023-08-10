@@ -4,7 +4,7 @@ try:
     import os
     import psutil
     import keyboard
-    import shutil
+    #import shutil
 
     #From_Imports
     from datetime import datetime
@@ -12,21 +12,51 @@ try:
 except ImportError:
     pass
 
-
+'''
 try:
 
     #First load all custom modules and functions:
-    from modules.Custom_Modules.log import log_message
-    from modules.Reminders import Reminders
-    from modules.Ubuntu_Pwr_State import Power_State_Testing
+    #from modules.Custom_Modules.log import log_message
+    #from modules.reminders import reminders
+    #from modules.Ubuntu_Pwr_State import Power_State_Testing
 
 except ImportError:
     pass
+'''
+#Above is commented out currently in order to figure out what modules break this on other machines
+
+#Add Custom Modules to Functions to prevent load errors on outside machines
+import datetime
+
+#Example Usage: 
+# log_message('message to be logged') - HAS TIMESTAMP for no timestamp utilize: log_break(message)
+def log_message(message):
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    log_entry = f'[{timestamp}] {message}'
+
+    with open ('log.txt', 'a') as log_file:
+        log_file.write(log_entry + '\n')
+
+#For usage at start and end to seperate log runs
+def log_break(message):
+    log_entry = f'{message}'
+    with open ('log.txt', 'a') as log_file:
+        log_file.write(log_entry + '\n')
+
+#Add back in reminders module - Ubuntu Distros only
+def reminders():
+    print('DON\'T FORGET THE FOLLOWING:')
+    try:
+        subprocess.run(['sudo', 'qtcreator'])
+        print('Select Tools>Options>Verify that Path shows QT5+.')
+    except FileNotFoundError:
+        pass
+    print('\n')
 
 #Function to format date and time strings
 def format_date_time(current_date_time):
-    date = f'Date:{current_date_time.year}/{current_date_time.month}/{current_date_time.day}'
-    time = f'Time:{current_date_time.hour}:{current_date_time.minute}:{current_date_time.second}'
+    date = f'Date: {current_date_time.year}/{current_date_time.month}/{current_date_time.day}'
+    time = f'Time: {current_date_time.hour}:{current_date_time.minute}:{current_date_time.second}'
     return date, time
 
 #DATE_TIME_START
@@ -34,7 +64,7 @@ def date_time_start():
     start_time_stamp = "\t\t\t START TIME\n"
     log_message(start_time_stamp)
 
-    current_date_time = datetime.now()
+    current_date_time = datetime.datetime.now()
     date, time = format_date_time(current_date_time)
 
     log_message(date)
@@ -45,7 +75,7 @@ def date_time_end():
     end_time_stamp = "\t\t\t END TIME\n"
     log_message(end_time_stamp)
 
-    current_date_time = datetime.now()
+    current_date_time = datetime.datetime.now()
     date, time = format_date_time(current_date_time)
 
     log_message(date)
@@ -124,7 +154,7 @@ def pip_installs():
     log_message(pip_header)
 
     #Define the required Packages
-    pip_packs = ['keyboard', 'psutil', 'ping3', 'shutil', 'platform', 'subprocess', 'os']
+    pip_packs = ['keyboard', 'psutil', 'ping3']
 
     #Check and Install Packages
     log_message('[+] Checking & Installation of Prerequisite Pip Packages is starting.')
@@ -135,17 +165,20 @@ def pip_installs():
 
             #Package is already Installed
             if result.returncode == 0:
-                log_message(f'Package {package} is already installed. Skipping Installation\n')
+                log_message(f'Package {package} is already installed. Skipping Installation')
             
             #package is not installed
             else:
                 log_message(f'Installing Package: {package}')
-                subprocess.run(['pip', 'install', package])
-                log_message(f'Successfully installed Package: {package}\n')
+                try:
+                    subprocess.run(['pip', 'install', package])
+                except:
+                    pass
 
         #Error occurred during Pip show command OR installation
         except subprocess.CalledProcessError as e:
             log_message(f'Failed to check or install package: {package}. Error: {e}')
+    log_break('')
     
 #PACKAGE_INSTALLATION
 #Build Out for installation of Ubuntu Packages - SKIP for Windows [Potentially build tool to detect OS later]
@@ -259,6 +292,7 @@ def network_chk():
         response_time = ping3.ping('google.com')
 
         if response_time is not None:
+            response_time = round(response_time, 5)
             log_message('Ping Successful to Google.com. Response time: ' + str(response_time) + '\n')
         else:
             log_message('Ping failed to Google.com.\n')
@@ -354,7 +388,6 @@ def setup_snapd():
         keyboard.press_and_release('enter')
         print('Snapd service started')
 
-
 #Ubuntu:
 def os_chooser(operating_system):
     def ubuntu_test():
@@ -363,11 +396,11 @@ def os_chooser(operating_system):
         network_chk()
         ubuntu_package_installation()
         setup_snapd()
-        Reminders()
+        reminders()
         #Sys_Update()
         #Package_Cleanup()
         #Burn_Linux()
-        Power_State_Testing()
+        #Power_State_Testing()
         date_time_end()
 
     def windows_test():
@@ -382,11 +415,11 @@ def os_chooser(operating_system):
         network_chk()
         rhel_package_installation()
         setup_snapd()
-        Reminders()
+        reminders()
         #Sys_Update()
         #Package_Cleanup()
         #Burn_Linux()
-        Power_State_Testing()
+        #Power_State_Testing()
         date_time_end()
 
     def open_suse_test():
@@ -395,11 +428,11 @@ def os_chooser(operating_system):
         network_chk()
         opensuse_package_installation()
         setup_snapd()
-        Reminders()
+        reminders()
         #Sys_Update()
         #Package_Cleanup()
         #Burn_Linux()
-        Power_State_Testing()
+        #Power_State_Testing()
         date_time_end()
 
     def centos_test():
@@ -408,11 +441,11 @@ def os_chooser(operating_system):
         network_chk()
         centos_package_installation()
         setup_snapd()
-        Reminders()
+        reminders()
         #Sys_Update()
         #Package_Cleanup()
         #Burn_Linux()
-        Power_State_Testing()
+        #Power_State_Testing()
         date_time_end()
 
     if operating_system == 'Linux':
@@ -431,11 +464,13 @@ def os_chooser(operating_system):
         open_suse_test()
 
 def main():
+    log_break('----------------------------------------------------------------------------------------------')
     date_time_start()
     pip_installs()
     #Define functions PER OS:
     operating_system = os_info()
     os_chooser(operating_system)
+    log_break('----------------------------------------------------------------------------------------------')
 
 #MAIN
 if __name__ == '__main__':
