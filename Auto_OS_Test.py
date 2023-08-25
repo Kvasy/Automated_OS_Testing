@@ -109,6 +109,54 @@ def log_cpu_info():
     cpu_inf = f'CPU Info: {os_info[5]}'
     log_message(cpu_inf)    
 
+#Windows_DxDIAG
+
+def dxdiag():
+    DxDIAG_Header = "\t\t\t DxDIAG\n"
+    try:
+        result=subprocess.run(['dxdiag',  '/t'], capture_output=True, text=True, check=True)
+        log_message(DxDIAG_Header + '\n')
+        log_message('DxDiag run successfully. FIle generated \n')
+    except subprocess.CalledProcessError as e:
+        print(f'Error running command dxdiag: {e}'+ '\n')
+
+
+#Info_Dumps_linux
+def lshw():
+    lshw_header = "\t\t\t LSHW\n"
+    try:
+        result=subprocess.run(['lshw'], capture_output=True, text=True, check=True)
+        log_message(result.stdout + '\n')
+    except subprocess.CalledProcessError as e:
+        print(f'Error running command lshw: {e}'+ '\n')
+
+def lsusb():
+    lsusb_header = "\t\t\t LSUSB\n"
+    try:
+        result=subprocess.run(['lsusb'], capture_output=True, text=True, check=True)
+        log_message(result.stdout + '\n')
+    except subprocess.CalledProcessError as e:
+        print(f'Error running command lsusb: {e}'+ '\n')
+
+def lspci():
+    lspci_header = "\t\t\t LSPCI\n"
+    try:
+        result=subprocess.run(['lspci'], capture_output=True, text=True, check=True)
+        log_message(result.stdout + '\n')
+    except subprocess.CalledProcessError as e:
+        print(f'Error running command lspci: {e}'+ '\n') 
+
+#Combine all above into single function
+def linux_info_dumps():
+    lshw()
+    lsusb()
+    lspci()
+
+
+
+
+
+
 #RUN FOR log_cpu_info
     try:
         with open('/proc/cpuinfo', 'r') as f:
@@ -396,6 +444,7 @@ def os_chooser(operating_system):
         network_chk()
         ubuntu_package_installation()
         setup_snapd()
+        linux_info_dumps()
         reminders()
         #Sys_Update()
         #Package_Cleanup()
@@ -407,6 +456,7 @@ def os_chooser(operating_system):
         log_cpu_info()
         log_memory_info()
         network_chk()
+        dxdiag()
         date_time_end()
     
     def rhel_test():
@@ -415,6 +465,7 @@ def os_chooser(operating_system):
         network_chk()
         rhel_package_installation()
         setup_snapd()
+        linux_info_dumps()
         reminders()
         #Sys_Update()
         #Package_Cleanup()
@@ -428,6 +479,7 @@ def os_chooser(operating_system):
         network_chk()
         opensuse_package_installation()
         setup_snapd()
+        linux_info_dumps()
         reminders()
         #Sys_Update()
         #Package_Cleanup()
@@ -441,6 +493,7 @@ def os_chooser(operating_system):
         network_chk()
         centos_package_installation()
         setup_snapd()
+        linux_info_dumps()
         reminders()
         #Sys_Update()
         #Package_Cleanup()
