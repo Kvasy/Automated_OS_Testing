@@ -288,6 +288,7 @@ date_time_handler = DateTimeHandler(current_date_time=datetime.now())
 linux_info = LinuxInfo(logger)
 ospkginstaller = OSPackageInstallations(logger)
 Gen_HW = cpu_mem_netwk(logger)
+break_lines = '----------------------------------------------------------------------------------------------'
 
 #os_info
 def os_info():
@@ -330,11 +331,15 @@ def pip_installs():
     for package in pip_packs:
         try:
             #Run PIP CMD show to check if a package is already installed
-            result=subprocess.run(['pip', 'show', package], capture_output=True, text=True)
+            result = subprocess.run(['pip', 'show', package], capture_output=True, text=True)
 
             #Package is already Installed
             if result.returncode == 0:
                 logger.log_message(f'Package {package} is already installed. Skipping Installation')
+                try:
+                    subprocess.run(['pip', 'install', '--upgrade', package])
+                except subprocess.CalledProcessError as e:
+                    logger.log_message(f'An error has occurred during upgrade. Error: {e}')
             
             #package is not installed
             else:
@@ -439,18 +444,14 @@ def os_input():
 
 #MAIN FUNCTION
 def main():
-    logger.log_break('----------------------------------------------------------------------------------------------')
-
+    logger.log_break(break_lines)
     date_time_handler.date_time_start(logger)
-
     pip_installs()
     os_info()
     operating_system = os_input()
     os_chooser(operating_system)
-    
     date_time_handler.date_time_end(logger)
-
-    logger.log_break('----------------------------------------------------------------------------------------------')
+    logger.log_break(break_lines)
 
 #MAIN
 if __name__ == '__main__':
