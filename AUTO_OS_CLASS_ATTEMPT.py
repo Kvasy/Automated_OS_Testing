@@ -9,6 +9,8 @@ try:
 except ImportError:
     pass
 
+
+
 #Adding Classes to attempt simplification
 class LogMessageFunc:
     def __init__(self, log_file):
