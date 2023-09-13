@@ -309,6 +309,35 @@ def os_info():
     logger.log_message(version+'\n')
     return os_info[0]
 
+def os_input():
+    os_options = {
+        1: 'Ubuntu',
+        2: 'Windows',
+        3: 'CentOS',
+        4: 'Red Hat Enterprise Linux',
+        5: 'OpenSUSE Leap'
+    }
+
+    while True:
+        try:
+            user_input = int(input(
+                'Which OS is currently under Test?:\n'
+                '1. Ubuntu\n'
+                '2. Windows\n'
+                '3. CentOS\n'
+                '4. Red Hat Enterprise Linux\n'
+                '5. OpenSUSE Leap\n'
+                'Please select a number 1-5 and press \'Enter\': '
+            ))
+            if user_input in os_options:
+                selected_os = os_options[user_input]
+                logger.log_message(f'OS: {selected_os}\n')
+                return selected_os
+            else:
+                print('Invalid input! Please enter a number between 1 and 5.: ')
+        except ValueError:
+            print('Invalid input! Please enter a number between 1 and 5.: ')
+
 #Windows_DxDIAG
 def dxdiag():
     DxDIAG_Header = "\t\t\t DxDIAG\n"
@@ -413,36 +442,6 @@ def os_chooser(operating_system):
         rhel_test()
     elif operating_system == 'OpenSUSE Leap':
         open_suse_test()
-
-
-def os_input():
-    os_options = {
-        1: 'Ubuntu',
-        2: 'Windows',
-        3: 'CentOS',
-        4: 'Red Hat Enterprise Linux',
-        5: 'OpenSUSE Leap'
-    }
-
-    while True:
-        try:
-            user_input = int(input(
-                'Which OS is currently under Test?:\n'
-                '1. Ubuntu\n'
-                '2. Windows\n'
-                '3. CentOS\n'
-                '4. Red Hat Enterprise Linux\n'
-                '5. OpenSUSE Leap\n'
-                'Please select a number 1-5 and press \'Enter\': '
-            ))
-            if user_input in os_options:
-                selected_os = os_options[user_input]
-                logger.log_message(f'OS: {selected_os}\n')
-                return selected_os
-            else:
-                print('Invalid input! Please enter a number between 1 and 5.: ')
-        except ValueError:
-            print('Invalid input! Please enter a number between 1 and 5.: ')
 
 #MAIN FUNCTION
 def main():
