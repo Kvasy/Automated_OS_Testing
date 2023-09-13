@@ -27,8 +27,8 @@ class LogMessageFunc:
             log_file.write(log_entry + '\n')
 
 class DateTimeHandler:
-    def __init__(self, current_date_time):
-        self.current_date_time = current_date_time
+    def __init__(self):
+        pass
 
     def format_date_time(self, current_date_time):
         date = f'Date: {current_date_time.year}/{current_date_time.month}/{current_date_time.day}'
@@ -284,7 +284,7 @@ class cpu_mem_netwk:
 #CONSTANTS:
 LOG_FILE = 'log.txt'
 logger = LogMessageFunc(LOG_FILE)
-date_time_handler = DateTimeHandler(current_date_time=datetime.now())
+date_time_handler = DateTimeHandler()
 linux_info = LinuxInfo(logger)
 ospkginstaller = OSPackageInstallations(logger)
 Gen_HW = cpu_mem_netwk(logger)
