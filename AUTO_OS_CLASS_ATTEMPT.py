@@ -1,11 +1,11 @@
+from datetime import datetime
+import platform
+import subprocess
 try:
-    import platform
-    import subprocess
     import os
     import psutil
     import keyboard
     import ping3
-    from datetime import datetime
 except ImportError:
     pass
 
@@ -15,7 +15,7 @@ class LogMessageFunc:
         self.log_file = log_file
 
     def log_message(self, message):
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        timestamp = current_date_time.strftime('%Y-%m-%d %H:%M:%S')
         log_entry = f'[{timestamp}] {message}'
 
         with open (self.log_file, 'a') as log_file:
@@ -445,8 +445,8 @@ def os_input():
 #MAIN FUNCTION
 def main():
     logger.log_break(break_lines)
-    date_time_handler.date_time_start(logger)
     pip_installs()
+    date_time_handler.date_time_start(logger)
     os_info()
     operating_system = os_input()
     os_chooser(operating_system)
