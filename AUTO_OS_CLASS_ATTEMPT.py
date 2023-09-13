@@ -248,7 +248,8 @@ class cpu_mem_netwk:
         #Setup Sub-Functions
         def ping_google(self):
             response_time = ping3.ping('google.com')
-
+            if ModuleNotFoundError:
+                pass
             if response_time is not None:
                 response_time = round(response_time, 5)
                 self.logger.log_message('Ping Successful to Google.com. Response time: ' + str(response_time) + '\n')
