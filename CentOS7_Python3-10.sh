@@ -31,4 +31,5 @@ echo "Adding Python 3.10 to PATH"
 export PATH="/usr/local/bin:$PATH"
 
 echo "Verifying Python 3.10 Installation"
+echo "python3.10 -V"
 python3.10 -V
