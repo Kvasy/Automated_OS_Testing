@@ -17,7 +17,7 @@ class LogMessageFunc:
         self.log_file = log_file
 
     def log_message(self, message):
-        timestamp = current_date_time.strftime('%Y-%m-%d %H:%M:%S')
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         log_entry = f'[{timestamp}] {message}'
 
         with open (self.log_file, 'a') as log_file:
