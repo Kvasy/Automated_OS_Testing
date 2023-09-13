@@ -1,10 +1,9 @@
 from datetime import datetime
 import platform
 import subprocess
+import sys
 try:
-    import os
     import psutil
-    import keyboard
     import ping3
 except ImportError:
     pass
@@ -176,7 +175,6 @@ class OSPackageInstallations:
             pkg_manager_cmd = subprocess.check_output(['which', 'yum']).decode().strip()
         except FileNotFoundError:
             raise Exception('Package Manager \'yum\' not found. Please ensure it is installed.')
-
         #Install Packages with Flags for Exceptions
         for package in packages:
             try:
@@ -359,16 +357,19 @@ def pip_installs():
 
     #Check and Install Packages
     logger.log_message('[+] Checking & Installation of Prerequisite Pip Packages is starting.')
+    
+    python_executable = sys.executable
+    
     for package in pip_packs:
         try:
             #Run PIP CMD show to check if a package is already installed
-            result = subprocess.run(['pip', 'show', package], capture_output=True, text=True)
+            result = subprocess.run([python_executable, 'pip', 'show', package], capture_output=True, text=True)
 
             #Package is already Installed
             if result.returncode == 0:
                 logger.log_message(f'Package {package} is already installed. Skipping Installation')
                 try:
-                    subprocess.run(['pip', 'install', '--upgrade', package])
+                    subprocess.run([python_executable,'-m', 'pip', 'install', '--upgrade', '--user', package])
                 except subprocess.CalledProcessError as e:
                     logger.log_message(f'An error has occurred during upgrade. Error: {e}')
             
@@ -376,7 +377,7 @@ def pip_installs():
             else:
                 logger.log_message(f'Installing Package: {package}')
                 try:
-                    subprocess.run(['pip', 'install', package])
+                    subprocess.run([python_executable,'-m', 'pip', 'install', '--user', package])
                 except:
                     pass
 
@@ -384,27 +385,6 @@ def pip_installs():
         except subprocess.CalledProcessError as e:
             logger.log_message(f'Failed to check or install package: {package}. Error: {e}')
     logger.log_break('')
-            
-'''#Setup_SNAPD
-def setup_snapd():
-    try:
-        subprocess.run(['sudo','systemctl','enable', '--now', 'snapd.socket'])
-    except FileNotFoundError:
-        pass        
-    if os.error:
-        print('Error occurred.')
-    else:
-        keyboard.press('enter')
-        print('Snapd service started.')
-    try:
-        subprocess.run(['sudo','ln','-s', '/var/lib/snapd/snap', '/snap'])
-    except FileNotFoundError:
-        pass
-    if os.error:
-        print('Error occurred')
-    else:
-        keyboard.press_and_release('enter')
-        print('Snapd service started')'''
 
 #Ubuntu:
 def os_chooser(operating_system):
@@ -432,7 +412,7 @@ def os_chooser(operating_system):
         ospkginstaller.centos_package_installation()
         linux_info.linux_info_dumps()
 
-    if operating_system == 'Linux':
+    if operating_system == 'Ubuntu':
         ubuntu_test()
     elif operating_system == 'Windows':
         windows_test()
