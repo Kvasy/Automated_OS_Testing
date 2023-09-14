@@ -20,8 +20,11 @@ cd /
 cd Python-3.10.2
 chmod +x ./configure
 
+# Replace $username with the actual username (you can use whoami or $USER)
+current_user=$(whoami)
+
 echo "Enabling optimizations"
-./configure --enable-optimizations
+./configure --enable-optimizations --with-openssl=/home/$current_user/openssl
 
 echo "Installing Python 3.10"
 make altinstall
