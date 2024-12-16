@@ -79,8 +79,8 @@ cp -av ./Automated_OS_Testing-main/ /home/$usr/Desktop/Auto_OS_Test || { echo "F
 cd /home/$usr/Desktop/Auto_OS_Test || { echo "Failed to navigate into Desktop OS Test Directory."; exit 1; }
 
 #Create HW Dump
-chmod +x ./V2_HW_DUMP.sh || { echo "Failed to make HW Dump executable."; exit 1; }
-bash ./V2_HW_DUMP.sh || { echo "Failed to execute HW DUMP. Ensure the V2_HW_DUMP.sh script exists and is executable."; exit 1; }
+chmod +x ./HW_DUMP/V2_HW_DUMP.sh || { echo "Failed to make HW Dump executable."; exit 1; }
+bash ./HW_DUMP/V2_HW_DUMP.sh || { echo "Failed to execute HW DUMP. Ensure the V2_HW_DUMP.sh script exists and is executable."; exit 1; }
 
 
 
